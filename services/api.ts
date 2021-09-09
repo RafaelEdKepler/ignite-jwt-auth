@@ -1,9 +1,18 @@
 import axios, {AxiosError} from 'axios';
-import { parseCookies, setCookie } from 'nookies';
+import Router from 'next/router';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
 
 let cookies = parseCookies();
 let isRefreshing = false;
 let failedRequestQueue = [];
+
+export function signOut() {
+  destroyCookie(undefined, 'nextauth.token');
+  destroyCookie(undefined, 'nextauth.refreshToken');
+
+  Router.push('/');
+}
+
 
 export const api = axios.create({
   baseURL: 'http://localhost:3333',
@@ -65,7 +74,9 @@ api.interceptors.response.use(response => {
         })
       })
     } else {
-
+      signOut();
     }
   }
+
+  return Promise.reject(error);
 })

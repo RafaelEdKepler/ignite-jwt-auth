@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from 'react';
-import { setCookie, parseCookies } from 'nookies';
+import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import Router from 'next/router';
-import { api } from '../services/api';
+import { api, signOut } from '../services/api';
 
 type SignInCredentials = {
   email: string;
@@ -41,6 +41,8 @@ export function AuthProvider({children} : AuthProviderProps) {
           permissions,
           roles
         })
+      }).catch(() => {
+        signOut();
       });
     }
   }, []);
